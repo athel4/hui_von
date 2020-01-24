@@ -1,0 +1,162 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no">
+    <title>@ViewBag.Title - My ASP.NET Application</title>
+    @Styles.Render("~/Content/css")
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" />
+    <link href="/assets/vendors/material-icons/material-icons.css" rel="stylesheet" type="text/css">
+    <link href="/assets/css/sweetalert2.css" rel="stylesheet" type="text/css">
+    <link href="/assets/css/perfect-scrollbar.min.css" rel="stylesheet" type="text/css">
+    <link href="/assets/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" type="text/css" href="/assets/vendors/datatables/datatables.min.css" />
+    <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-3.4.1.min.js"></script>
+    <script src="/assets/js/modernizr.min.js"></script>
+    <style>
+        .cursor-pointer{
+            cursor:pointer;
+        }
+        .navbar, .navbar a {
+            color: white;
+            border-bottom: solid 1px transparent;
+        }
+
+            .navbar a:hover:not(.nochange) {
+                border-bottom-color: white;
+            }
+
+            .navbar navbar-toggle:hover {
+                color: white;
+            }
+
+            .navbar .navbar-toggle {
+                border: solid 1px transparent;
+            }
+
+                .navbar .navbar-toggle .material-icons {
+                    width: 40px;
+                    padding-top: 0.6em;
+                }
+
+                .navbar .navbar-toggle:hover {
+                    border-color: white;
+                }
+    </style>
+    @RenderSection("styles", required: false)
+</head>
+<body>
+    <div class="navbar bg-dark navbar-fixed-top">
+        <div class="container">
+            <div class="d-flex justify-content-between mx-auto navbar-header w-100">
+                <div><a class="navbar-brand nochange" href="/"><h2>PuzzlePlace</h2></a><small>(Admin Site)</small></div>
+                <ul class="d-none d-lg-flex list-unstyled pt-3 mb-0">
+                    <li class="pr-4"><a class="navbar-brand" href="/">Home</a></li>
+                    <li class="pr-4"><a class="navbar-brand" href="/home/GetListing">Show Product</a></li>
+                    @*<li class="pr-4"><a class="navbar-brand" href="home/PlaceOrder">Place Order</a></li>*@
+                    @*<li><a class="navbar-brand" href="home/CheckMyOrder">Check Order</a></li>*@
+                </ul>
+                <a class="navbar-toggle bg-transparent d-lg-none" data-toggle="collapse" data-target=".navbar-collapse" href="javascript:void(0)">
+                    <i class="list-icon material-icons text-white text-center">menu</i>
+                </a>
+            </div>
+            <div class="navbar-collapse collapse d-lg-none">
+                <ul class="nav navbar-nav">
+                    <li><a class="navbar-brand" href="/">Home</a></li>
+                    <li><a class="navbar-brand" href="/GetListing">Show Product</a></li>
+                    @*<li><a class="navbar-brand" href="home/PlaceOrder">Place Order</a></li>*@
+                    @*<li><a class="navbar-brand" href="home/CheckMyOrder">Check Order</a></li>*@
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="container body-content">
+        @RenderBody()
+        <hr />
+        <footer>
+            <p>&copy; @DateTime.Now.Year - My ASP.NET Application</p>
+        </footer>
+    </div>
+
+    @*@Scripts.Render("~/bundles/jquery")
+        @Scripts.Render("~/bundles/bootstrap")*@
+    <script src="/assets/js/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+    <script src="/assets/js/jquery.magnific-popup.min.js"></script>
+    <script src="/assets/js/perfect-scrollbar.jquery.js"></script>
+    <script src="/assets/js/sweetalert2.js"></script>
+    <script type="text/javascript" src="/assets/vendors/datatables/datatables.min.js"></script>
+    <script>
+        var swalLoadingSetting = {
+	        html:'<div class="progress progress-md mb-0 mt-0 w-100" style="height: 30px !important"><div class="progress-bar progress-bar-striped progress-bar-animated w-100 h-100 rounded te" role="progressbar" style="background-color:#b3b3b3"></div></div>',
+	
+	        buttons: false,
+	        closeOnClickOutside: false,
+	        closeOnEsc: false,
+	        showCloseButton: false,
+	        showConfirmButton: false,
+	        allowOutsideClick: false,
+	        allowEscapeKey : false,
+        };
+        function PostForm(_ret_fn, _data, _path_name, _http_action){
+	
+	        var actualLink = window.location.href.split("?")[0].split("#")[0];
+	        if (window.location.pathname.length >1)
+		        actualLink = actualLink.replace(window.location.pathname,'');
+	        actualLink+='/'+ _path_name;
+	
+	        if(_data instanceof FormData===false)
+		        _data = JSON.stringify(_data);
+	        $.ajax({
+		        url: actualLink,
+		        type: (_http_action)? _http_action:"POST",
+		        processData: false,
+		        contentType: false,
+		        data: _data,
+		        success: function (response) {
+			        //console.log('me')
+			        _ret_fn(response)
+		        },
+		        error: function (response) {
+			        //console.log(response);
+			        if (String(response['statusText']).toLocaleLowerCase() == 'timeout')
+				        swal('Request Timed Out')
+			        else
+				        _ret_fn(response)
+		        },
+		        timeout: 60000 // sets timeout to 60 seconds
+	        });
+        }
+        function PostFormError(_res){
+	        var parser = new DOMParser();
+	        var el = parser.parseFromString(_res, "text/html");
+	
+	        if(_res)
+		        swal({content: el,buttons: false})
+        }
+        function setCookie(cname, cvalue, exdays, specificexpiredate) {
+            var d = new Date();
+	        if (!exdays)
+		        exdays = 0;
+            d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+            var expires = "expires=" + d.toUTCString();
+	        if (specificexpiredate)
+	        {
+		        var oS = new Date(specificexpiredate);
+		        expires = "expires=" + oS.toUTCString();
+	        }
+	        //console.log(expires)
+            document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+	        return true
+        }
+        function getCookie(name) {
+            var value = "; " + document.cookie;
+            var parts = value.split("; " + name + "=");
+            if (parts.length == 2) return parts.pop().split(";").shift();
+        }
+    </script>
+
+    @RenderSection("scripts", required: false)
+</body>
+</html>

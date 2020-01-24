@@ -1,0 +1,117 @@
+﻿@model PuzzlePlace.Models.ViewModel
+@{
+
+}
+@section styles{
+<style>
+    .sorting, .sorting_asc, .sorting_desc{
+        padding-right:0px !important
+    }
+    .sorting:before, .sorting_asc:before, .sorting_desc:before,
+    .sorting:after, .sorting_asc:after, .sorting_desc:after{
+        visibility:hidden;
+    }
+    tbody tr:hover,  tbody tr.addBorder{
+        background-color: cornsilk !important;
+        color:black;
+    }
+    .page-item.active .page-link{
+        background-color: #343a40!important;
+    }
+</style>
+    }
+<section id="GetListing" class="py-4">
+    <table class="w-100 table-bordered text-center" id="TblContent">
+        <thead>
+            <tr class="col-12">
+                <th rowspan="2">#</th>
+                <th rowspan="2">Action</th>
+                <th rowspan="2">Name</th>
+                <th colspan="3">Unit Price</th>
+                <th rowspan="2">Qty</th>
+            </tr>
+            <tr>
+                <th>AUD</th>
+                <th>USD</th>
+                <th  class="border-right">GBP</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (int i = 0; i < @Model.oApiProduct.Value.Count; i++)
+            {
+                int oFinalQty = Convert.ToInt32(Model.oApiProduct.Value[i].maximumQuantity);
+            <tr>
+                <td>@(i + 1)</td>
+                <td><form><input type="hidden" name="reqid" value="@Model.oApiProduct.Value[i].productId" /><a href="javscript:void(0)" class="text-dark" onclick="popAskQty(this)"><input type="hidden" name="reqqty" max="@((oFinalQty > 0) ? oFinalQty :0)" /><i class="list-icon material-icons text-center">shopping_cart</i></a> <a href="javscript:void(0)" class="text-dark" onclick="submit(this)"><i class="list-icon material-icons text-center">save</i></a></form></td>
+                <td data-toggle="tooltip" data-placement="right" title="@Model.oApiProduct.Value[i].description" class="cursor-pointer">@Model.oApiProduct.Value[i].name</td>
+                <td>@((Convert.ToDecimal(Model.oApiProduct.Value[i].unitPrice) * Convert.ToDecimal(1.2)).ToString("#,###0.00"))</td>
+                
+                <td>@((Convert.ToDecimal(Model.oApiProduct.Value[i].unitPrice * Model.oApiFixRate.Value[0].rate) * Convert.ToDecimal(1.2)).ToString("#,###0.00"))</td>
+                <td>@((Convert.ToDecimal(Model.oApiProduct.Value[i].unitPrice * Model.oApiFixRate.Value[2].rate) * Convert.ToDecimal(1.2)).ToString("#,###0.00"))</td>
+                <td>@((oFinalQty > 0) ? oFinalQty :0)</td>
+            </tr>
+            }
+        </tbody>
+    </table>
+</section>
+@section scripts{
+    <script type="text/javascript">
+        
+        function popAskQty(_caller) {
+            var oTarg = $(_caller).find('input[name="reqqty"]');
+            swal({
+                input: 'number',
+                inputValue: oTarg.val()? oTarg.val(): '',
+                inputPlaceholder: 'Qty',
+                inputAttributes: { max: parseInt(oTarg.attr('max')) },
+                showCancelButton: true
+            }).then((value) => {
+                oTarg.val(value).trigger('change');
+            });
+
+            $('.swal2-modal.swal2-show').find('input[type="number"]').on('keyup', (a) => {
+                var oSubTarg = $(a.target);
+                if (parseInt(oSubTarg.val()) > parseInt(oSubTarg.attr('max'))) {
+                    oSubTarg.val(parseInt(oSubTarg.attr('max')))
+                }
+            })
+        }
+        function submit(_caller) {
+            swal(swalLoadingSetting);
+            var data = new FormData($(_caller).closest('form')[0])
+	        PostForm(SubmitProc, data, "home/PlaceOrder")
+        }
+        function SubmitProc(_res) {
+            swal.close();
+
+            var obj = eval('(' + _res + ')');
+            swal(obj["message"])
+        }
+        $('input[name="reqqty"]').on('change', (a) => {
+            
+            var oTarg = $(a.target);
+            oTarg.parents('tr').removeClass('addBorder');
+            
+            if (oTarg.val()) {
+                
+                if (oTarg.val() > 0)
+                    oTarg.parents('tr').addClass('addBorder')
+            }
+        })
+
+        $(document).ready(function () {
+            $('#TblContent').DataTable({
+                responsive: true,
+                "columns": [
+                    { "width": "30px","orderable": false },
+                    { "width": "30px","orderable": false },
+                    { "width": "200px" },
+                    { "width": "40px" },
+                    { "width": "40px" },
+                    { "width": "40px" },
+                    { "width": "40px" }
+                ]
+            });
+        })
+    </script>
+}
