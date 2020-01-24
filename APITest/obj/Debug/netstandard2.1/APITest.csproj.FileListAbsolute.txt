@@ -1,0 +1,8 @@
+D:\athel\Test3\APITest\bin\Debug\netstandard2.1\APITest.deps.json
+D:\athel\Test3\APITest\bin\Debug\netstandard2.1\APITest.dll
+D:\athel\Test3\APITest\bin\Debug\netstandard2.1\APITest.pdb
+D:\athel\Test3\APITest\obj\Debug\netstandard2.1\APITest.csprojAssemblyReference.cache
+D:\athel\Test3\APITest\obj\Debug\netstandard2.1\APITest.AssemblyInfoInputs.cache
+D:\athel\Test3\APITest\obj\Debug\netstandard2.1\APITest.AssemblyInfo.cs
+D:\athel\Test3\APITest\obj\Debug\netstandard2.1\APITest.dll
+D:\athel\Test3\APITest\obj\Debug\netstandard2.1\APITest.pdb
